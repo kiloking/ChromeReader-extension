@@ -1,0 +1,14 @@
+{
+  "name": "minimax-article-sidepanel",
+  "private": true,
+  "scripts": {
+    "build:extract": "esbuild src/extract-entry.js --bundle --format=iife --outfile=extension/extract.bundle.js --platform=neutral --legal-comments=none",
+    "icons": "node scripts/gen-icons.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  },
+  "dependencies": {
+    "@mozilla/readability": "^0.5.0"
+  }
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <title>MiniMax 文章總結</title>
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <header class="header">
+      <h1 class="title">文章總結</h1>
+      <p class="tab-meta" id="tabMeta">載入分頁資訊中…</p>
+    </header>
+
+    <section class="panel controls">
+      <label class="field">
+        <span class="label">API 區域（須與 Key 來源站台一致）</span>
+        <select id="apiBase" title="在哪家後台開的 Key 就選哪一條">
+          <option value="https://api.minimax.io" selected>
+            國際區（platform.minimax.io）
+          </option>
+          <option value="https://api.minimaxi.com">
+            中國區（platform.minimaxi.com）
+          </option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="label">MiniMax API Key</span>
+        <input
+          id="apiKey"
+          type="password"
+          autocomplete="off"
+          placeholder="只貼金鑰，勿含「Bearer 」前綴"
+        />
+      </label>
+      <label class="field">
+        <span class="label">模型 ID</span>
+        <input id="model" type="text" placeholder="M2-her" />
+      </label>
+      <label class="field">
+        <span class="label">輸出語言</span>
+        <select id="outputLang">
+          <option value="auto">與正文一致（自動）</option>
+          <option value="繁體中文">繁體中文</option>
+          <option value="简体中文">简体中文</option>
+          <option value="English">English</option>
+        </select>
+      </label>
+      <button type="button" class="btn primary" id="summarizeBtn">
+        總結此頁
+      </button>
+      <p class="hint">
+        摘要不會儲存；Key 僅存於本機。若要面板在<strong>瀏覽器右側</strong>：Chrome
+        <kbd>設定</kbd> → <kbd>外觀</kbd> → <kbd>側邊面板</kbd> → 選擇顯示側。
+      </p>
+    </section>
+
+    <section class="panel output" id="outputSection" hidden>
+      <div class="toolbar">
+        <span class="usage" id="usageMeta"></span>
+        <button type="button" class="btn ghost" id="copyBtn">複製全文</button>
+      </div>
+      <textarea id="result" readonly rows="16" spellcheck="false"></textarea>
+    </section>
+
+    <p class="error" id="errorMsg" hidden></p>
+
+    <script src="sidepanel.js"></script>
+  </body>
+</html>
