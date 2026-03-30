@@ -9,6 +9,7 @@ const STORAGE_KEYS = {
   apiBase: "minimaxApiBase",
   apiKey: "minimaxApiKey",
   model: "minimaxModel",
+  settingsCollapsed: "minimaxSettingsCollapsed",
 };
 
 const $ = (id) => document.getElementById(id);
@@ -17,6 +18,9 @@ const apiBaseEl = $("apiBase");
 const apiKeyEl = $("apiKey");
 const modelEl = $("model");
 const outputLangEl = $("outputLang");
+const settingsPanel = $("settingsPanel");
+const settingsToggle = $("settingsToggle");
+const settingsSummary = $("settingsSummary");
 const summarizeBtn = $("summarizeBtn");
 const copyBtn = $("copyBtn");
 const resultEl = $("result");
@@ -65,11 +69,36 @@ async function refreshTabMeta() {
   return tabId;
 }
 
+function applySettingsCollapsed(collapsed) {
+  settingsPanel.classList.toggle("collapsed", collapsed);
+  settingsToggle.setAttribute("aria-expanded", String(!collapsed));
+  updateSettingsSummary();
+}
+
+function updateSettingsSummary() {
+  if (!settingsPanel.classList.contains("collapsed")) {
+    settingsSummary.textContent = "";
+    return;
+  }
+  const region = apiBaseEl.value.includes("minimax.io")
+    ? "國際區"
+    : "中國區";
+  const model = modelEl.value.trim() || "M2-her";
+  const langLabel =
+    outputLangEl.options[outputLangEl.selectedIndex]?.text?.trim() || "";
+  const keyOk = apiKeyEl.value.trim().length > 0;
+  const parts = [region, model];
+  if (langLabel && outputLangEl.value !== "auto") parts.push(langLabel);
+  parts.push(keyOk ? "Key 已設定" : "未填 Key");
+  settingsSummary.textContent = parts.join(" · ");
+}
+
 async function loadSettings() {
   const data = await chrome.storage.local.get([
     STORAGE_KEYS.apiBase,
     STORAGE_KEYS.apiKey,
     STORAGE_KEYS.model,
+    STORAGE_KEYS.settingsCollapsed,
   ]);
   if (
     data[STORAGE_KEYS.apiBase] &&
@@ -83,6 +112,14 @@ async function loadSettings() {
     apiKeyEl.value = data[STORAGE_KEYS.apiKey];
   }
   modelEl.value = data[STORAGE_KEYS.model] || "M2-her";
+
+  const hasKey = Boolean((data[STORAGE_KEYS.apiKey] || "").trim());
+  const stored = data[STORAGE_KEYS.settingsCollapsed];
+  let collapsed;
+  if (stored === true) collapsed = true;
+  else if (stored === false) collapsed = false;
+  else collapsed = hasKey;
+  applySettingsCollapsed(collapsed);
 }
 
 async function persistSettings() {
@@ -105,6 +142,10 @@ async function onSummarize() {
   const apiKey = apiKeyEl.value.trim();
   if (!apiKey) {
     showError("請填寫 API Key。");
+    applySettingsCollapsed(false);
+    await chrome.storage.local.set({
+      [STORAGE_KEYS.settingsCollapsed]: false,
+    });
     return;
   }
 
@@ -162,9 +203,25 @@ async function onCopy() {
 function wireEvents() {
   summarizeBtn.addEventListener("click", () => onSummarize());
   copyBtn.addEventListener("click", () => onCopy());
-  apiBaseEl.addEventListener("change", () => persistSettings());
-  apiKeyEl.addEventListener("change", () => persistSettings());
-  modelEl.addEventListener("change", () => persistSettings());
+
+  settingsToggle.addEventListener("click", async () => {
+    const collapsed = !settingsPanel.classList.contains("collapsed");
+    applySettingsCollapsed(collapsed);
+    await chrome.storage.local.set({
+      [STORAGE_KEYS.settingsCollapsed]: collapsed,
+    });
+  });
+
+  const onSettingsChange = () => {
+    persistSettings();
+    updateSettingsSummary();
+  };
+  apiBaseEl.addEventListener("change", onSettingsChange);
+  apiKeyEl.addEventListener("input", onSettingsChange);
+  apiKeyEl.addEventListener("change", onSettingsChange);
+  modelEl.addEventListener("change", onSettingsChange);
+  modelEl.addEventListener("input", onSettingsChange);
+  outputLangEl.addEventListener("change", onSettingsChange);
 
   chrome.tabs.onActivated.addListener(() => {
     refreshTabMeta();

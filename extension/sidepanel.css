@@ -54,7 +54,111 @@ body {
   margin-bottom: 12px;
 }
 
-.controls .field {
+/* ---------- 可摺疊的 API 設定 ---------- */
+.settings {
+  padding: 0;
+  overflow: hidden;
+}
+
+.settings-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: none;
+  border-bottom: 1px solid transparent;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.settings-toggle:hover {
+  background: #222c3d;
+}
+
+.settings.collapsed .settings-toggle {
+  border-bottom-color: var(--border);
+}
+
+.settings-toggle-label {
+  flex: 0 0 auto;
+}
+
+.settings-summary {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settings.collapsed .settings-summary {
+  display: block;
+}
+
+.settings:not(.collapsed) .settings-summary {
+  display: none;
+}
+
+.chevron {
+  flex-shrink: 0;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--muted);
+  transition: transform 0.15s ease;
+  transform-origin: 50% 40%;
+}
+
+.settings.collapsed .chevron {
+  transform: rotate(-90deg);
+}
+
+.settings-body {
+  padding: 12px;
+  padding-top: 10px;
+}
+
+.settings.collapsed .settings-body {
+  display: none;
+}
+
+.settings-body .field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.settings-body .field:last-of-type {
+  margin-bottom: 0;
+}
+
+.hint-settings {
+  margin: 10px 0 0;
+}
+
+.panel-actions {
+  padding: 12px;
+}
+
+.hint-actions {
+  margin: 8px 0 0;
+}
+
+.field {
   display: flex;
   flex-direction: column;
   gap: 4px;
