@@ -6,6 +6,8 @@
 
 # MiniMax 文章側欄總結（Chrome 擴充）
 
+![MiniMax 文章側欄預覽](docs/images/sidebar-preview.jpg)
+
 在瀏覽文章時，用 Chrome **側邊面板**一鍵擷取網頁正文，呼叫 **MiniMax** 文字 API 產生 Markdown 重點與靈感片段，並可複製。API Key 只放在本機（`chrome.storage.local`），不經伺服器、也不上傳你的摘要歷史。
 
 ## 你需要準備
